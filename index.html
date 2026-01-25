@@ -1,26 +1,161 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Cycle Ride</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IITGN Ride 🚲</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      overflow: hidden;
+      color: white;
+    }
+
+    /* ---------- VIDEO BACKGROUND ---------- */
+    .video-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+
+    /* ---------- DARK OVERLAY ---------- */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+
+    /* ---------- MAIN CONTENT ---------- */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      animation: fadeUp 1.4s ease forwards;
+    }
+
+    .hero h1 {
+      font-size: clamp(3.5rem, 8vw, 6rem);
+      font-weight: 800;
+      letter-spacing: -2px;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      max-width: 700px;
+      opacity: 0.9;
+    }
+
+    /* ---------- BOTTOM LOGIN ---------- */
+    .login-area {
+      position: absolute;
+      bottom: 40px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      animation: fadeUp 2s ease forwards;
+    }
+
+    .login-btn {
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      border: none;
+      padding: 10px 22px;
+      font-size: 0.95rem;
+      border-radius: 999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+
+    .login-btn span {
+      font-size: 1rem;
+    }
+
+    /* ---------- ANIMATION ---------- */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Cycle Ride 🚲</h1>
-  <p>Firebase connection test</p>
 
-  <button id="loginBtn">Login with Google</button>
+  <!-- VIDEO BACKGROUND -->
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="assets/campus.mp4" type="video/mp4" />
+  </video>
 
+  <!-- OVERLAY -->
+  <div class="overlay"></div>
+
+  <!-- HERO TEXT -->
+  <div class="hero">
+    <h1>IITGN Ride 🚲</h1>
+    <p>
+      Move freely across campus.  
+      Rent a cycle. Ride for a day. Return with ease.
+    </p>
+  </div>
+
+  <!-- LOGIN AT BOTTOM -->
+  <div class="login-area">
+    <button id="loginBtn" class="login-btn">
+      <span>CHALOO</span>
+       
+    </button>
+  </div>
+
+  <!-- FIREBASE AUTH -->
   <script type="module">
     import { auth } from "./js/firebase.js";
-    import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { GoogleAuthProvider, signInWithPopup } from
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const loginBtn = document.getElementById("loginBtn");
 
     loginBtn.addEventListener("click", async () => {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      console.log("User:", result.user);
-      alert("Logged in as " + result.user.displayName);
+      try {
+        await signInWithPopup(auth, provider);
+        window.location.href = "dashboard.html";
+      } catch (e) {
+        alert("Login failed: " + e.message);
+      }
     });
   </script>
+
 </body>
 </html>
