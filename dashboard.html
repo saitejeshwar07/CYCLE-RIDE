@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cycle Ride 🚲</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --yellow:#FFD400;
+  --black:#0a0a0a;
+  --card:#111;
+  --text:#f5f5f5;
+  --muted:#9ca3af;
+}
+
+/* RESET */
+*{ margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+body{
+  background:var(--black);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* SLIDE-UP */
+@keyframes slideUp{
+  from{ transform:translateY(40px); opacity:0; }
+  to{ transform:translateY(0); opacity:1; }
+}
+
+/* HEADER */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 30px;
+  color:var(--yellow);
+  font-size:1.8rem;
+  font-weight:700;
+}
+
+#aboutBtn{
+  background:none;
+  border:1px solid var(--yellow);
+  color:var(--yellow);
+  padding:6px 14px;
+  border-radius:20px;
+  cursor:pointer;
+}
+#aboutBtn:hover{
+  background:var(--yellow);
+  color:black;
+  transition:.3s;
+}
+
+/* MAIN */
+main{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+  animation:slideUp .6s ease;
+}
+
+/* TOP BAR */
+#topBar{
+  background:#111;
+  border-radius:14px;
+  padding:14px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.logout{
+  background:red;
+  border:none;
+  padding:8px 16px;
+  border-radius:20px;
+  color:white;
+  cursor:pointer;
+}
+
+/* CARDS */
+.card{
+  background:var(--card);
+  border-radius:16px;
+  padding:16px;
+  display:flex;
+  gap:16px;
+  align-items:center;
+  margin-bottom:16px;
+  animation:slideUp .5s ease;
+  box-shadow:0 0 0 rgba(255,212,0,0);
+  transition:.3s;
+}
+.card:hover{
+  box-shadow:0 0 20px rgba(255,212,0,.4);
+}
+
+.card img{
+  width:130px;
+  height:90px;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+.info{ flex:1; }
+.info b{ font-size:1.1rem; }
+.muted{ color:var(--muted); font-size:.9rem; }
+
+/* BUTTONS */
+button{
+  border:none;
+  padding:8px 16px;
+  border-radius:20px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.rentBtn{
+  background:var(--yellow);
+  color:black;
+}
+.returnBtn{ background:orange; }
+.deleteBtn{ background:red; color:white; }
+
+/* ADMIN */
+#adminPanel{
+  margin-top:40px;
+  background:#111;
+  padding:24px;
+  border-radius:20px;
+}
+
+.adminForm{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.adminForm input{
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #333;
+  background:#000;
+  color:white;
+}
+
+.addBtn{
+  background:var(--yellow);
+  color:black;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  overflow:hidden;
+  border-radius:12px;
+}
+
+th,td{
+  padding:12px;
+  text-align:center;
+}
+th{
+  background:var(--yellow);
+  color:black;
+}
+tr:nth-child(even){
+  background:#1a1a1a;
+}
+
+/* ABOUT US MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.85);
+  animation:fadeIn 0.3s ease;
+}
+.modal-content {
+  background-color: #111;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  color: #f5f5f5;
+  animation:slideUp 0.5s ease;
+}
+.close {
+  color: var(--yellow);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover {
+  color: #fff;
+}
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>Cycle Ride 🚲</div>
+  <button id="aboutBtn">About Us</button>
+</header>
+
+<main>
+  <div id="topBar">
+    <span id="userName"></span>
+    <button class="logout" id="logoutBtn">Logout</button>
+  </div>
+
+  <div id="myRental"></div>
+
+  <h2 style="margin-bottom:14px;">Available Cycles</h2>
+  <div id="cycleList"></div>
+
+  <!-- ADMIN -->
+  <div id="adminPanel" style="display:none;">
+    <h2>Admin Panel</h2>
+
+    <div class="adminForm">
+      <input id="ownerName" placeholder="Owner name">
+      <input id="price" type="number" placeholder="Price per day">
+      <input id="campus" placeholder="Campus">
+      <input id="imageName" placeholder="Image name (cycle1.jpg)">
+      <button class="addBtn" id="addCycleBtn">Add Cycle</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Owner</th>
+          <th>Price</th>
+          <th>Campus</th>
+          <th>Status</th>
+          <th>Remove</th>
+        </tr>
+      </thead>
+      <tbody id="adminTable"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ABOUT US MODAL -->
+<div id="aboutModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>About Me</h2>
+    <p>Hi, I’m <b>Sai Tejeshwar Pawar</b>, a B.Tech student in <b>Chemical Engineering at IIT Gandhinagar</b>. I often struggled to reach my classes on time—what should take 5 minutes usually took 10 minutes on foot. I noticed many cycles on campus were sitting idle, so I built <b>Cycle Ride</b>, a simple rental system where students can rent out their unused cycles to earn some money, while others can save time and reach classes faster. Currently, I’m focused on <b>solving real problems and building useful solutions</b> that make life easier for everyone.This is currently just a prototype. Cycles and payment methods have not been added yet; it is meant only to demonstrate the basic functionality, without any payment integration.<b>SO DON'T MAKE PAYMENT </b></p>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script type="module">
+import { auth, db } from "./js/firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const ADMIN_EMAIL = "pawarsaitejeshwar07@gmail.com";
+
+const userName = document.getElementById("userName");
+const logoutBtn = document.getElementById("logoutBtn");
+const cycleList = document.getElementById("cycleList");
+const myRental = document.getElementById("myRental");
+const adminPanel = document.getElementById("adminPanel");
+const adminTable = document.getElementById("adminTable");
+
+let currentUser;
+let isAdmin = false;
+
+onAuthStateChanged(auth, user => {
+  if(!user) location.href="index.html";
+  currentUser = user;
+  isAdmin = user.email === ADMIN_EMAIL;
+  userName.innerText = `👋 ${user.displayName}`;
+  adminPanel.style.display = isAdmin ? "block" : "none";
+  loadCycles();
+});
+
+logoutBtn.onclick = () => signOut(auth);
+
+async function loadCycles(){
+  cycleList.innerHTML="";
+  myRental.innerHTML="";
+  adminTable.innerHTML="";
+
+  const snap = await getDocs(collection(db,"cycles"));
+  snap.forEach(d=>{
+    const c = d.data();
+
+    if(c.status==="available"){
+      cycleList.innerHTML += `
+      <div class="card">
+        <img src="${c.imageUrl}">
+        <div class="info">
+          <b>${c.ownerName}</b><br>
+          ₹${c.price}/day<br>
+          <span class="muted">${c.campus}</span>
+        </div>
+        <button class="rentBtn" onclick="rent('${d.id}',${c.price})">Rent</button>
+      </div>`;
+    }
+
+    if(c.status==="rented" && c.rentedBy===currentUser.uid){
+      myRental.innerHTML += `
+      <div class="card">
+        <img src="${c.imageUrl}">
+        <div class="info"><b>${c.ownerName}</b></div>
+        <button class="returnBtn" onclick="ret('${d.id}')">Return</button>
+      </div>`;
+    }
+
+    if(isAdmin){
+      adminTable.innerHTML += `
+      <tr>
+        <td>${c.ownerName}</td>
+        <td>₹${c.price}</td>
+        <td>${c.campus}</td>
+        <td>${c.status}</td>
+        <td><button class="deleteBtn" onclick="del('${d.id}')">Delete</button></td>
+      </tr>`;
+    }
+  });
+}
+
+window.del = async id => {
+  if(confirm("Delete cycle?")){
+    await deleteDoc(doc(db,"cycles",id));
+    loadCycles();
+  }
+};
+
+window.ret = async id => {
+  await updateDoc(doc(db,"cycles",id),{
+    status:"available",
+    rentedBy:null
+  });
+  loadCycles();
+};
+
+window.rent = (id,price)=>{
+  const rzp = new Razorpay({
+    key:"",
+    amount:price*100,
+    handler:async ()=>{
+      await updateDoc(doc(db,"cycles",id),{
+        status:"rented",
+        rentedBy:currentUser.uid
+      });
+      loadCycles();
+    }
+  });
+  rzp.open();
+};
+
+addCycleBtn.onclick = async ()=>{
+  if(!imageName.value){
+    alert("Enter image name like cycle1.jpg");
+    return;
+  }
+
+  await addDoc(collection(db,"cycles"),{
+    ownerName:ownerName.value,
+    price:Number(price.value),
+    campus:campus.value,
+    imageUrl:`images/${imageName.value}`,
+    status:"available"
+  });
+
+  ownerName.value=price.value=campus.value=imageName.value="";
+  loadCycles();
+};
+
+// ABOUT US MODAL
+const aboutBtn = document.getElementById("aboutBtn");
+const aboutModal = document.getElementById("aboutModal");
+const closeBtn = aboutModal.querySelector(".close");
+
+aboutBtn.onclick = () => aboutModal.style.display = "block";
+closeBtn.onclick = () => aboutModal.style.display = "none";
+window.onclick = (e) => { if(e.target === aboutModal) aboutModal.style.display = "none"; }
+</script>
+
+</body>
+</html>
