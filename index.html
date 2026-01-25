@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cycle Ride</title>
+</head>
+<body>
+  <h1>Cycle Ride 🚲</h1>
+  <p>Firebase connection test</p>
+
+  <button id="loginBtn">Login with Google</button>
+
+  <script type="module">
+    import { auth } from "./js/firebase.js";
+    import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const loginBtn = document.getElementById("loginBtn");
+
+    loginBtn.addEventListener("click", async () => {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      console.log("User:", result.user);
+      alert("Logged in as " + result.user.displayName);
+    });
+  </script>
+</body>
+</html>
